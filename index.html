@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寶寶遊戲時間</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #ffebee;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            transition: background-color 1s ease;
+        }
+        #game-container {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        #background-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            transition: background-color 1s ease;
+            overflow: hidden;
+            background-color: #ffebee;
+        }
+        .scene-ocean {
+            background: linear-gradient(180deg, #87CEEB 0%, #1E90FF 100%);
+        }
+        .scene-savanna {
+            background: linear-gradient(180deg, #87CEEB 0%, #90EE90 100%);
+        }
+        .scene-farm {
+            background: linear-gradient(180deg, #87CEEB 0%, #8FBC8F 100%);
+        }
+        .cloud {
+            position: fixed;
+            background: white;
+            border-radius: 50px;
+            animation: cloudFloat linear infinite;
+            opacity: 0.8;
+        }
+        .rainbow {
+            position: fixed;
+            width: 200px;
+            height: 100px;
+            border-radius: 100px 100px 0 0;
+            background: linear-gradient(
+                180deg,
+                #ff0000,
+                #ff9900,
+                #ffff00,
+                #33ff33,
+                #3333ff,
+                #9900cc
+            );
+            opacity: 0.3;
+            animation: rainbowFloat 15s linear infinite;
+        }
+        .star {
+            position: fixed;
+            color: yellow;
+            font-size: 20px;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+        .butterfly {
+            position: fixed;
+            font-size: 24px;
+            animation: butterflyFloat 10s linear infinite;
+        }
+        .flower {
+            position: fixed;
+            font-size: 30px;
+            bottom: 20px;
+            animation: flowerSway 3s ease-in-out infinite;
+        }
+        .bubble {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: bubbleFloat 8s linear infinite;
+            pointer-events: none;
+        }
+        .leaf {
+            position: fixed;
+            font-size: 30px;
+            animation: leafFloat 6s linear infinite;
+            pointer-events: none;
+        }
+        .bird {
+            position: fixed;
+            font-size: 30px;
+            animation: birdFly 12s linear infinite;
+            pointer-events: none;
+        }
+        .fish {
+            position: fixed;
+            font-size: 30px;
+            animation: fishSwim 10s linear infinite;
+            pointer-events: none;
+        }
+        .flying-egg {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.8;
+            transition: opacity 0.5s ease;
+        }
+        @keyframes eggFloat {
+            0% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(25vw, 20vh) rotate(15deg);
+            }
+            50% {
+                transform: translate(50vw, 40vh) rotate(-15deg);
+            }
+            75% {
+                transform: translate(75vw, 20vh) rotate(15deg);
+            }
+            100% {
+                transform: translate(100vw, 0) rotate(0deg);
+            }
+        }
+        @keyframes cloudFloat {
+            from { left: -100px; }
+            to { left: 100vw; }
+        }
+        @keyframes rainbowFloat {
+            0% { transform: translateX(-250px) rotate(-10deg); opacity: 0.3; }
+            50% { opacity: 0.5; }
+            100% { transform: translateX(100vw) rotate(-10deg); opacity: 0.3; }
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        @keyframes butterflyFloat {
+            0% { transform: translate(-100px, 50vh) rotate(0deg); }
+            25% { transform: translate(25vw, 30vh) rotate(20deg); }
+            50% { transform: translate(50vw, 50vh) rotate(0deg); }
+            75% { transform: translate(75vw, 30vh) rotate(-20deg); }
+            100% { transform: translate(100vw, 50vh) rotate(0deg); }
+        }
+        @keyframes flowerSway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        @keyframes bubbleFloat {
+            0% {
+                transform: translateY(100vh) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.5;
+            }
+            80% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.5);
+                opacity: 0;
+            }
+        }
+        @keyframes leafFloat {
+            0% {
+                transform: translateX(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateX(100vw) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        @keyframes birdFly {
+            0% {
+                transform: translate(-100px, 20vh) scaleX(1);
+            }
+            25% {
+                transform: translate(25vw, 30vh) scaleX(1);
+            }
+            50% {
+                transform: translate(50vw, 20vh) scaleX(-1);
+            }
+            75% {
+                transform: translate(75vw, 30vh) scaleX(-1);
+            }
+            100% {
+                transform: translate(100vw, 20vh) scaleX(1);
+            }
+        }
+        @keyframes fishSwim {
+            0% {
+                transform: translateX(-100px) scaleX(1);
+            }
+            50% {
+                transform: translateX(50vw) scaleX(-1);
+            }
+            100% {
+                transform: translateX(100vw) scaleX(1);
+            }
+        }
+        #main-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 20px;
+            transition: all 0.5s ease;
+            cursor: pointer;
+            object-fit: cover;
+            position: relative;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .image-container {
+            position: relative;
+            display: inline-block;
+            margin: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 25px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .animal-name {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 24px;
+            color: #ff6b6b;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 2;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .accessory {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .hat {
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .glasses {
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .scarf {
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #message {
+            font-size: 24px;
+            color: #ff6b6b;
+            margin-top: 20px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            background: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        #counter {
+            font-size: 48px;
+            color: #4CAF50;
+            margin-top: 10px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            background: white;
+            padding: 10px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        #counter:hover {
+            transform: scale(1.1);
+        }
+        #music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff9999;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        #music-control:hover {
+            background: #ff7777;
+            transform: scale(1.1);
+        }
+        .effect {
+            position: fixed;
+            pointer-events: none;
+            animation: float 2s ease-out forwards;
+            font-size: 40px;
+            z-index: 1000;
+        }
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--moveX), var(--moveY)) scale(1.5) rotate(var(--rotation));
+                opacity: 0;
+            }
+        }
+        .firework {
+            position: fixed;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: firework 1s ease-out forwards;
+            z-index: 1000;
+        }
+        @keyframes firework {
+            0% {
+                transform: translate(0, 0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--x), var(--y));
+                opacity: 0;
+            }
+        }
+        .game-title {
+            font-size: 64px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #FFA500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+        /* 移除背景動物相關樣式 */
+    </style>
+</head>
+<body>
+    <div id="background-scene"></div>
+    <div id="game-container">
+        <h1 class="game-title">綠澄亂按</h1>
+        <div class="image-container">
+            <img id="main-image" src="狗.png" alt="可愛動物">
+        </div>
+        <div id="message">按下任意鍵來玩！</div>
+        <div id="counter">
+            <div>數到十</div>
+            <div style="font-size: 72px;">0</div>
+        </div>
+    </div>
+    <button id="music-control">🎵</button>
+    <script>
+        const images = [
+            '狗.png',      // 狗
+            '綿羊.png',    // 綿羊
+            '鴨子.png',    // 鴨子
+            '豬.png',      // 豬
+            '兔子.png',    // 兔子
+            '老虎.png',    // 老虎
+            '雞.png',      // 雞
+            '老鼠.png',    // 老鼠
+            '貓咪.png',    // 貓
+            '金魚.png',    // 金魚
+            '烏龜.png',    // 烏龜
+            '乳牛.png',    // 乳牛
+            '馬.png',      // 馬
+            '猴子.png'     // 猴子
+        ];
+
+        // 動物名稱對應
+        const animalNames = [
+            '狗狗', '綿羊', '鴨子', '小豬',
+            '兔子', '老虎', '小雞', '老鼠',
+            '貓咪', '金魚', '烏龜', '乳牛',
+            '馬兒', '猴子'
+        ];
+
+        // 音效設定 - 可愛的音效
+        const sounds = [
+            'https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3',    // 可愛的木琴音效
+            'https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3',    // 歡樂的鈴鐺聲
+            'https://assets.mixkit.co/active_storage/sfx/888/888-preview.mp3',      // 輕快的音效
+            'https://assets.mixkit.co/active_storage/sfx/2152/2152-preview.mp3',    // 打擊音效1
+            'https://assets.mixkit.co/active_storage/sfx/2153/2153-preview.mp3'     // 打擊音效2
+        ];
+
+        // 背景音樂列表
+        const backgroundMusics = [
+            {
+                url: '1233.mp3',
+                name: '歡樂音樂'
+            },
+            {
+                url: '1233.mp3',
+                name: '快樂鋼琴'
+            },
+            {
+                url: '1233.mp3',
+                name: '輕快旋律'
+            }
+        ];
+
+        let currentMusicIndex = 0;
+        let isMusicPlaying = false;
+        const backgroundMusic = new Audio();
+        backgroundMusic.volume = 0.3;
+        backgroundMusic.loop = true;
+
+        const emojis = ['🌟', '🎈', '🌈', '💖', '✨', '🎨', '🎵', '🦄'];
+        const mainImage = document.getElementById('main-image');
+        const gameContainer = document.getElementById('game-container');
+        const musicControl = document.getElementById('music-control');
+        let currentImageIndex = 0;
+        let currentSoundIndex = 0;
+
+        const accessories = {
+            hats: ['👒', '🎩', '🧢', '⛑️', '👑'],
+            glasses: ['👓', '🕶️', '🥽'],
+            scarves: ['🧣']
+        };
+
+        const backgroundTypes = {
+            fish: 'ocean',
+            elephant: 'savanna',
+            cow: 'farm',
+            lion: 'savanna',
+            dog: 'farm',
+            cat: 'farm',
+            sheep: 'farm'
+        };
+
+        let voiceTimer = null;
+        let speechUtterance = null;
+        let counter = 0;
+        const rewardColors = [
+            'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)',  // 粉紅色漸層
+            'linear-gradient(135deg, #98FB98 0%, #32CD32 100%)',  // 綠色漸層
+            'linear-gradient(135deg, #87CEEB 0%, #0000FF 100%)',  // 藍色漸層
+            'linear-gradient(135deg, #FFB6C1 0%, #FF69B4 100%)',  // 粉紅色漸層
+            'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)',  // 金色漸層
+            'linear-gradient(135deg, #90EE90 0%, #32CD32 100%)'   // 綠色漸層
+        ];
+        let currentColorIndex = 0;
+
+        // 純色版本用於顯示顏色名稱
+        const solidColors = [
+            '#FF69B4',  // 粉紅色
+            '#32CD32',  // 綠色
+            '#0000FF',  // 藍色
+            '#FF69B4',  // 粉紅色
+            '#FFD700',  // 金色
+            '#32CD32'   // 綠色
+        ];
+
+        // 初始化語音合成
+        const synth = window.speechSynthesis;
+        
+        function updateAnimalName(index) {
+            // 移除舊的名稱標籤
+            const oldName = document.querySelector('.animal-name');
+            if (oldName) {
+                oldName.remove();
+            }
+
+            // 創建新的名稱標籤
+            const nameLabel = document.createElement('div');
+            nameLabel.className = 'animal-name';
+            nameLabel.textContent = animalNames[index];
+            
+            document.querySelector('.image-container').appendChild(nameLabel);
+        }
+
+        function speakAnimalName(index) {
+            // 取消之前的語音
+            if (speechUtterance) {
+                synth.cancel();
+            }
+
+            const name = animalNames[index];
+            speechUtterance = new SpeechSynthesisUtterance(name);
+            
+            // 設置語音參數
+            speechUtterance.lang = 'zh-TW';
+            speechUtterance.rate = 0.9;
+            speechUtterance.pitch = 1.2;
+            speechUtterance.volume = 7.0;  // 增加音量到 7.0
+            
+            // 尋找更適合的語音
+            let voices = synth.getVoices();
+            let childVoice = voices.find(voice => 
+                voice.lang.includes('zh') && 
+                (voice.name.includes('Child') || voice.name.includes('Kid')));
+            
+            if (!childVoice) {
+                childVoice = voices.find(voice => 
+                    voice.lang.includes('zh') && 
+                    (voice.name.includes('Female') || voice.name.includes('Girl')));
+            }
+            
+            if (!childVoice) {
+                childVoice = voices.find(voice => voice.lang.includes('zh'));
+            }
+            
+            if (childVoice) {
+                speechUtterance.voice = childVoice;
+            }
+
+            // 只播放動物名稱，移除自動播放數字
+            synth.speak(speechUtterance);
+        }
+
+        function startVoiceTimer() {
+            if (voiceTimer) {
+                clearTimeout(voiceTimer);
+            }
+            
+            voiceTimer = setTimeout(() => {
+                speakAnimalName(currentImageIndex);
+            }, 1500);
+        }
+
+        // 音樂控制相關功能
+        musicControl.addEventListener('click', () => {
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+                musicControl.textContent = '🎵';
+                isMusicPlaying = false;
+            } else {
+                playBackgroundMusic();
+            }
+        });
+
+        // 播放背景音樂的函數
+        function playBackgroundMusic() {
+            backgroundMusic.src = backgroundMusics[currentMusicIndex].url;
+            backgroundMusic.play()
+                .then(() => {
+                    isMusicPlaying = true;
+                    musicControl.textContent = '⏸';
+                    showMusicName(backgroundMusics[currentMusicIndex].name);
+                })
+                .catch(error => {
+                    console.error('音樂播放錯誤:', error);
+                    showError('音樂播放失敗，請再試一次');
+                });
+        }
+
+        // 顯示錯誤訊息
+        function showError(message) {
+            const errorMsg = document.createElement('div');
+            errorMsg.style.position = 'fixed';
+            errorMsg.style.top = '120px';
+            errorMsg.style.right = '20px';
+            errorMsg.style.background = 'rgba(255, 99, 99, 0.9)';
+            errorMsg.style.padding = '10px';
+            errorMsg.style.borderRadius = '10px';
+            errorMsg.style.color = 'white';
+            errorMsg.style.zIndex = '1000';
+            errorMsg.textContent = message;
+            document.body.appendChild(errorMsg);
+            setTimeout(() => errorMsg.remove(), 3000);
+        }
+
+        function showMusicName(name) {
+            const musicName = document.createElement('div');
+            musicName.style.position = 'fixed';
+            musicName.style.top = '80px';
+            musicName.style.right = '20px';
+            musicName.style.background = 'rgba(255, 255, 255, 0.9)';
+            musicName.style.padding = '5px 10px';
+            musicName.style.borderRadius = '10px';
+            musicName.style.fontSize = '14px';
+            musicName.style.color = '#ff6b6b';
+            musicName.style.zIndex = '1000';
+            musicName.textContent = `正在播放: ${name}`;
+            
+            document.body.appendChild(musicName);
+            setTimeout(() => musicName.remove(), 2000);
+        }
+
+        // 音量調整功能
+        document.addEventListener('keydown', (event) => {
+            if (isControlLocked) return;  // 如果控制被鎖定，不執行任何操作
+
+            // 如果音樂還沒開始播放，開始播放
+            if (!isMusicPlaying) {
+                playBackgroundMusic();
+            }
+
+            // 音量控制
+            if (event.key === '+' || event.key === '=') {
+                backgroundMusic.volume = Math.min(1, backgroundMusic.volume + 0.1);
+                showVolumeIndicator(backgroundMusic.volume);
+            }
+            if (event.key === '-') {
+                backgroundMusic.volume = Math.max(0, backgroundMusic.volume - 0.1);
+                showVolumeIndicator(backgroundMusic.volume);
+            }
+
+            // 創建效果和切換圖片
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createEffect(), i * 50);
+            }
+            playSound();
+            changeImage();
+            updateCounter();
+        });
+
+        document.addEventListener('keyup', (event) => {
+        });
+
+        // 修改點擊事件
+        mainImage.addEventListener('click', () => {
+            if (isControlLocked) return;  // 如果控制被鎖定，不執行任何操作
+
+            // 如果音樂還沒開始播放，開始播放
+            if (!isMusicPlaying) {
+                playBackgroundMusic();
+            }
+
+            // 創建效果和切換圖片
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => createEffect(), i * 50);
+            }
+            playSound();
+            changeImage();
+            updateCounter();
+        });
+
+        function showVolumeIndicator(volume) {
+            const volumeIndicator = document.createElement('div');
+            volumeIndicator.style.position = 'fixed';
+            volumeIndicator.style.top = '80px';
+            volumeIndicator.style.right = '20px';
+            volumeIndicator.style.background = 'rgba(255, 255, 255, 0.9)';
+            volumeIndicator.style.padding = '5px 10px';
+            volumeIndicator.style.borderRadius = '10px';
+            volumeIndicator.style.fontSize = '14px';
+            volumeIndicator.style.color = '#ff6b6b';
+            volumeIndicator.style.zIndex = '1000';
+            volumeIndicator.textContent = `音量: ${Math.round(volume * 100)}%`;
+            
+            document.body.appendChild(volumeIndicator);
+            setTimeout(() => volumeIndicator.remove(), 1000);
+        }
+
+        function playSound() {
+            // 同時播放兩個音效
+            const audio1 = new Audio(sounds[currentSoundIndex]);
+            const audio2 = new Audio(sounds[(currentSoundIndex + 1) % sounds.length]);
+            
+            audio1.volume = 0.4;  // 降低音效音量到 40%
+            audio2.volume = 0.4;  // 降低音效音量到 40%
+            
+            // 稍微延遲第二個音效
+            audio1.play().catch(error => {
+                console.log('無法播放音效，請確認音效檔案路徑是否正確');
+            });
+            
+            setTimeout(() => {
+                audio2.play().catch(error => {
+                    console.log('無法播放音效，請確認音效檔案路徑是否正確');
+                });
+            }, 50);
+
+            currentSoundIndex = (currentSoundIndex + 1) % sounds.length;
+        }
+
+        function createEffect() {
+            const effect = document.createElement('div');
+            effect.className = 'effect';
+            effect.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            
+            // 隨機位置（整個視窗範圍）
+            const startX = Math.random() * window.innerWidth;
+            const startY = Math.random() * window.innerHeight;
+            
+            // 隨機移動方向和距離
+            const moveX = (Math.random() - 0.5) * 300; // -150px 到 150px
+            const moveY = (Math.random() - 0.5) * 300; // -150px 到 150px
+            const rotation = (Math.random() - 0.5) * 360; // -180度 到 180度
+            
+            effect.style.left = startX + 'px';
+            effect.style.top = startY + 'px';
+            effect.style.setProperty('--moveX', moveX + 'px');
+            effect.style.setProperty('--moveY', moveY + 'px');
+            effect.style.setProperty('--rotation', rotation + 'deg');
+            
+            document.body.appendChild(effect);
+            setTimeout(() => effect.remove(), 2000);
+        }
+
+        function createClouds() {
+            const cloud = document.createElement('div');
+            cloud.className = 'cloud';
+            cloud.style.top = Math.random() * 50 + '%';
+            cloud.style.width = Math.random() * 100 + 50 + 'px';
+            cloud.style.height = Math.random() * 30 + 20 + 'px';
+            cloud.style.animationDuration = Math.random() * 20 + 10 + 's';
+            document.getElementById('background-scene').appendChild(cloud);
+            setTimeout(() => cloud.remove(), 30000);
+        }
+
+        function createBackgroundElements() {
+            const scene = document.getElementById('background-scene');
+            
+            // 創建彩虹
+            const rainbow = document.createElement('div');
+            rainbow.className = 'rainbow';
+            scene.appendChild(rainbow);
+
+            // 創建星星
+            for (let i = 0; i < 15; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.textContent = '⭐';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 50 + 'vh';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                scene.appendChild(star);
+            }
+
+            // 創建蝴蝶
+            const butterfly = document.createElement('div');
+            butterfly.className = 'butterfly';
+            butterfly.textContent = '🦋';
+            scene.appendChild(butterfly);
+
+            // 創建花朵
+            for (let i = 0; i < 8; i++) {
+                const flower = document.createElement('div');
+                flower.className = 'flower';
+                flower.textContent = ['🌸', '🌺', '🌼', '🌻', '🌹', '🌷', '🌱', '🌿'][i];
+                flower.style.left = (i * 15 + 5) + 'vw';
+                flower.style.animationDelay = i * 0.2 + 's';
+                scene.appendChild(flower);
+            }
+
+            // 創建氣泡
+            for (let i = 0; i < 10; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                bubble.style.left = Math.random() * 100 + 'vw';
+                bubble.style.width = Math.random() * 30 + 10 + 'px';
+                bubble.style.height = bubble.style.width;
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                scene.appendChild(bubble);
+            }
+
+            // 定期更新背景元素
+            setInterval(() => {
+                // 移除舊的氣泡
+                const oldBubbles = scene.querySelectorAll('.bubble');
+                oldBubbles.forEach(bubble => bubble.remove());
+
+                // 創建新的氣泡
+                for (let i = 0; i < 10; i++) {
+                    const bubble = document.createElement('div');
+                    bubble.className = 'bubble';
+                    bubble.style.left = Math.random() * 100 + 'vw';
+                    bubble.style.width = Math.random() * 30 + 10 + 'px';
+                    bubble.style.height = bubble.style.width;
+                    bubble.style.animationDelay = Math.random() * 5 + 's';
+                    scene.appendChild(bubble);
+                }
+            }, 8000); // 每8秒更新一次
+        }
+
+        function updateBackground(imageSrc) {
+            const scene = document.getElementById('background-scene');
+            scene.innerHTML = ''; // 清除之前的背景元素
+            let sceneType = 'farm'; // 默認場景
+
+            // 根據圖片URL判斷動物類型
+            Object.entries(backgroundTypes).forEach(([animal, type]) => {
+                if (imageSrc.toLowerCase().includes(animal.toLowerCase())) {
+                    sceneType = type;
+                }
+            });
+
+            // 更新場景
+            scene.className = `scene-${sceneType}`;
+            
+            // 添加背景元素
+            createBackgroundElements();
+            
+            // 如果不是海洋場景，添加雲朵
+            if (sceneType !== 'ocean') {
+                createClouds();
+            }
+        }
+
+        function addRandomAccessory() {
+            const container = document.querySelector('.image-container');
+            container.querySelectorAll('.accessory').forEach(acc => acc.remove());
+
+            // 隨機選擇配件
+            if (Math.random() > 0.5) {
+                const accessoryTypes = Object.keys(accessories);
+                const type = accessoryTypes[Math.floor(Math.random() * accessoryTypes.length)];
+                const accessory = accessories[type][Math.floor(Math.random() * accessories[type].length)];
+
+                const accessoryDiv = document.createElement('div');
+                accessoryDiv.className = `accessory ${type}`;
+                accessoryDiv.textContent = accessory;
+                container.appendChild(accessoryDiv);
+            }
+        }
+
+        function changeImage() {
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            mainImage.src = images[currentImageIndex];
+            
+            updateAnimalName(currentImageIndex);
+            
+            // 隨機跳動效果
+            const randomScale = 1 + Math.random() * 0.3; // 1.0 到 1.3 之間的隨機值
+            const randomRotate = (Math.random() - 0.5) * 20; // -10 到 10 度之間的隨機值
+            mainImage.style.transform = `scale(${randomScale}) rotate(${randomRotate}deg)`;
+            setTimeout(() => {
+                mainImage.style.transform = 'scale(1) rotate(0deg)';
+            }, 300);
+
+            addRandomAccessory();
+            startVoiceTimer();
+        }
+
+        function createFirework(x, y) {
+            for (let i = 0; i < 36; i++) {
+                const firework = document.createElement('div');
+                firework.className = 'firework';
+                firework.style.left = x + 'px';
+                firework.style.top = y + 'px';
+                firework.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                
+                const angle = (i * 10) * Math.PI / 180;
+                const distance = 100 + Math.random() * 50;
+                const moveX = Math.cos(angle) * distance;
+                const moveY = Math.sin(angle) * distance;
+                
+                firework.style.setProperty('--x', moveX + 'px');
+                firework.style.setProperty('--y', moveY + 'px');
+                
+                document.body.appendChild(firework);
+                setTimeout(() => firework.remove(), 1000);
+            }
+        }
+
+        function speakNumber(number) {
+            if (isControlLocked) return;
+            
+            // 取消之前的語音
+            if (speechUtterance) {
+                synth.cancel();
+            }
+
+            speechUtterance = new SpeechSynthesisUtterance(`數字${number}`);
+            
+            // 設置語音參數
+            speechUtterance.lang = 'zh-TW';
+            speechUtterance.rate = 0.9;
+            speechUtterance.pitch = 1.2;
+            speechUtterance.volume = 7.0;  // 增加音量到 7.0
+            
+            // 尋找更適合的語音
+            let voices = synth.getVoices();
+            let childVoice = voices.find(voice => 
+                voice.lang.includes('zh') && 
+                (voice.name.includes('Child') || voice.name.includes('Kid')));
+            
+            if (!childVoice) {
+                childVoice = voices.find(voice => 
+                    voice.lang.includes('zh') && 
+                    (voice.name.includes('Female') || voice.name.includes('Girl')));
+            }
+            
+            if (!childVoice) {
+                childVoice = voices.find(voice => voice.lang.includes('zh'));
+            }
+            
+            if (childVoice) {
+                speechUtterance.voice = childVoice;
+            }
+
+            synth.speak(speechUtterance);
+        }
+
+        let isControlLocked = false;  // 新增控制鎖定狀態
+        let lastClickTime = 0;  // 新增上次點擊時間記錄
+        const CLICK_COOLDOWN = 1500;  // 點擊冷卻時間（毫秒）
+
+        // 修改計數器點擊事件，添加冷卻時間
+        document.getElementById('counter').addEventListener('click', () => {
+            if (isControlLocked) return;
+            
+            const currentTime = Date.now();
+            if (currentTime - lastClickTime < CLICK_COOLDOWN) {
+                return;  // 如果在冷卻時間內，不執行點擊
+            }
+            
+            lastClickTime = currentTime;  // 更新最後點擊時間
+            speakNumber(counter);
+        });
+
+        let currentEggIndex = 0;
+        const eggImages = ['蛋1.png', '蛋2.png', '蛋3.png', '蛋4.png'];
+        let eggElement = null;
+
+        function createFlyingEgg() {
+            const scene = document.getElementById('background-scene');
+            
+            // 如果已經存在蛋，先移除
+            if (eggElement) {
+                eggElement.remove();
+            }
+
+            // 創建新的蛋
+            eggElement = document.createElement('img');
+            eggElement.className = 'flying-egg';
+            eggElement.src = eggImages[currentEggIndex];
+            
+            // 設置初始位置（從畫面中間開始）
+            const startX = window.innerWidth / 2;
+            const startY = window.innerHeight / 2;
+            eggElement.style.left = startX + 'px';
+            eggElement.style.top = startY + 'px';
+            
+            // 設置初始速度和方向
+            let x = startX;
+            let y = startY;
+            let dx = 1 + Math.random() * 1; // 降低速度到 1-2
+            let dy = 1 + Math.random() * 1; // 降低速度到 1-2
+            let rotation = 0;
+            
+            // 動畫函數
+            function animate() {
+                // 更新位置
+                x += dx;
+                y += dy;
+                rotation += dx * 0.3; // 降低旋轉速度
+                
+                // 檢查邊界碰撞
+                if (x <= 0 || x >= window.innerWidth - 60) {
+                    dx = -dx; // 水平反彈
+                }
+                if (y <= 0 || y >= window.innerHeight - 60) {
+                    dy = -dy; // 垂直反彈
+                }
+                
+                // 更新蛋的位置和旋轉
+                eggElement.style.transform = `translate(${x - startX}px, ${y - startY}px) rotate(${rotation}deg)`;
+                
+                // 繼續動畫
+                requestAnimationFrame(animate);
+            }
+            
+            // 開始動畫
+            animate();
+            scene.appendChild(eggElement);
+        }
+
+        function updateEggOnReward() {
+            // 更新蛋的索引
+            currentEggIndex = (currentEggIndex + 1) % eggImages.length;
+            
+            // 重新創建蛋
+            createFlyingEgg();
+        }
+
+        function updateCounter() {
+            const random = Math.random();
+            if (random < 0.7) { // 70% 機率增加
+                counter++;
+                if (counter >= 10) {
+                    // 鎖定控制
+                    isControlLocked = true;
+                    
+                    // 觸發獎勵
+                    counter = 0;
+                    
+                    // 更新蛋的動畫
+                    updateEggOnReward();
+                    
+                    // 隨機選擇一個新的顏色（排除當前顏色）
+                    let newColorIndex;
+                    do {
+                        newColorIndex = Math.floor(Math.random() * rewardColors.length);
+                    } while (newColorIndex === currentColorIndex);
+                    currentColorIndex = newColorIndex;
+                    
+                    // 更新背景顏色
+                    const newColor = rewardColors[currentColorIndex];
+                    const backgroundScene = document.getElementById('background-scene');
+                    backgroundScene.style.background = newColor;
+                    document.body.style.background = newColor;
+                    
+                    // 移除所有場景類別
+                    backgroundScene.classList.remove('scene-ocean', 'scene-savanna', 'scene-farm');
+                    
+                    // 暫停背景音樂
+                    backgroundMusic.pause();
+                    
+                    // 播放得獎音效
+                    const rewardSound = new Audio('頒獎.mp3');
+                    rewardSound.volume = 0.8;  // 增加音量
+                    rewardSound.play().catch(error => {
+                        console.error('得獎音效播放失敗:', error);
+                    }).then(() => {
+                        // 音效播放完成後恢復背景音樂
+                        setTimeout(() => {
+                            if (isMusicPlaying) {
+                                backgroundMusic.play();
+                            }
+                        }, 4000);  // 改為4秒後恢復
+                    });
+                    
+                    // 創建更多煙火效果
+                    for (let i = 0; i < 15; i++) {
+                        setTimeout(() => {
+                            createFirework(
+                                Math.random() * window.innerWidth,
+                                Math.random() * window.innerHeight
+                            );
+                        }, i * 100);
+                    }
+                    
+                    // 創建彩色星星效果
+                    for (let i = 0; i < 30; i++) {
+                        setTimeout(() => {
+                            const star = document.createElement('div');
+                            star.className = 'effect';
+                            star.textContent = '⭐';
+                            star.style.left = Math.random() * window.innerWidth + 'px';
+                            star.style.top = Math.random() * window.innerHeight + 'px';
+                            star.style.setProperty('--moveX', (Math.random() - 0.5) * 800 + 'px');
+                            star.style.setProperty('--moveY', (Math.random() - 0.5) * 800 + 'px');
+                            star.style.setProperty('--rotation', (Math.random() - 0.5) * 720 + 'deg');
+                            star.style.fontSize = '40px';
+                            document.body.appendChild(star);
+                            setTimeout(() => star.remove(), 2000);
+                        }, i * 50);
+                    }
+                    
+                    // 顯示獎勵訊息
+                    const rewardMsg = document.createElement('div');
+                    rewardMsg.style.position = 'fixed';
+                    rewardMsg.style.top = '50%';
+                    rewardMsg.style.left = '50%';
+                    rewardMsg.style.transform = 'translate(-50%, -50%)';
+                    rewardMsg.style.fontSize = '72px';
+                    rewardMsg.style.color = '#FF6B6B';
+                    rewardMsg.style.fontWeight = 'bold';
+                    rewardMsg.style.textShadow = '6px 6px 12px rgba(0,0,0,0.3)';
+                    rewardMsg.style.zIndex = '1000';
+                    rewardMsg.style.background = 'rgba(255, 255, 255, 0.95)';
+                    rewardMsg.style.padding = '20px 40px';
+                    rewardMsg.style.borderRadius = '30px';
+                    rewardMsg.style.boxShadow = '0 12px 24px rgba(0,0,0,0.2)';
+                    rewardMsg.style.animation = 'bounce 0.5s ease infinite';
+                    rewardMsg.style.display = 'inline-block';  // 改為行內塊級元素
+                    rewardMsg.style.whiteSpace = 'nowrap';  // 防止文字換行
+                    
+                    // 根據顏色顯示對應的顏色名稱
+                    const colorNames = {
+                        '#FF69B4': '紅色',
+                        '#32CD32': '綠色',
+                        '#0000FF': '藍色',
+                        '#FFD700': '金色'
+                    };
+                    rewardMsg.textContent = `🎉 太棒了！獲得${colorNames[solidColors[currentColorIndex]]}！🎉`;
+                    document.body.appendChild(rewardMsg);
+
+                    // 2秒後解除控制鎖定
+                    setTimeout(() => {
+                        isControlLocked = false;
+                        rewardMsg.remove();
+                    }, 4000);  // 改為4秒後移除提示訊息
+                }
+            } else { // 30% 機率歸零
+                counter = 0;
+            }
+            document.getElementById('counter').innerHTML = `
+                <div>數到十</div>
+                <div style="font-size: 72px;">${counter}</div>
+            `;
+        }
+
+        // 確保語音引擎已加載
+        speechSynthesis.onvoiceschanged = function() {
+            let voices = synth.getVoices();
+            console.log('可用的語音:', voices.map(v => `${v.name} (${v.lang})`).join('\n'));
+        };
+
+        // 修改初始化部分，確保蛋在頁面加載後立即創建
+        window.addEventListener('load', () => {
+            // 初始化音樂源
+            backgroundMusic.src = backgroundMusics[currentMusicIndex].url;
+            
+            // 初始化背景和動物名稱
+            updateBackground(images[0]);
+            updateAnimalName(0);
+            startVoiceTimer();
+            
+            // 創建背景元素
+            createBackgroundElements();
+            
+            // 創建蛋（確保在最後執行）
+            setTimeout(createFlyingEgg, 100);
+        });
+
+        // 修改彈跳動畫
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes bounce {
+                0%, 100% { transform: translate(-50%, -50%) scale(1); }
+                50% { transform: translate(-50%, -50%) scale(1.1); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html> 
